@@ -17,3 +17,4 @@ if __name__ == '__main__':
     # test
     args = get_args()
     train(args)
+    # python legged_gym/scripts/train.py --task=go2 --experiment first_test --num_envs 8 --sim_device=cpu
