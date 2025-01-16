@@ -39,6 +39,12 @@ class LeggedRobot(BaseTask):
         self.init_done = False
         self._parse_cfg(self.cfg)
         super().__init__(self.cfg, sim_params, physics_engine, sim_device, headless)
+        ### ----------Failure----------
+        self.has_failure = True
+        if self.has_failure
+            self.broken_time = 0
+            self.
+        ### ----------Failure done.----------
 
         if not self.headless:
             self.set_camera(self.cfg.viewer.pos, self.cfg.viewer.lookat)
@@ -55,6 +61,17 @@ class LeggedRobot(BaseTask):
 
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
+
+        ### ----------Failure----------
+        if self.has_failure:
+
+            mask_condition = self.common_step_counter >= self.broken_time.squeeze(1)
+            # 使用扩展的mask_condition选择需要mask的关节索引
+            selected_broken_joint_indices = (self.broken_joint_indices[0][mask_condition], self.broken_joint_indices[1][mask_condition])
+            # 仅对满足条件的环境应用mask
+            self.actions[selected_broken_joint_indices] = 0.0
+
+
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
